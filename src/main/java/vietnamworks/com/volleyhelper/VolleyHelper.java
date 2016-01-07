@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import R.helper.Callback;
 import R.helper.CallbackResult;
@@ -27,7 +28,7 @@ import R.helper.CallbackSuccess;
  * Created by duynk on 1/6/16.
  */
 public class VolleyHelper {
-    public static void request(final Context context, @NonNull String url, @Nullable final HashMap<String, String> header, @Nullable HashMap<String, String> params, final Callback callback) {
+    public static void request(final Context context, @NonNull String url, @Nullable final HashMap<String, String> header, @Nullable HashMap<String, Object> params, final Callback callback) {
         RequestQueue queue = Volley.newRequestQueue(context);
         JSONObject data = null;
         if (params != null) {
@@ -57,11 +58,19 @@ public class VolleyHelper {
         ) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String,String> m = super.getHeaders();
+                HashMap<String, String> h;
                 if (header == null) {
-                    return new HashMap<>();
+                    h = new HashMap<String, String>();
                 } else {
-                    return header;
+                    h = (HashMap<String, String>)header.clone();
                 }
+                for (Map.Entry<String,String> entry : m.entrySet()) {
+                    String key = entry.getKey();
+                    String thing = entry.getValue();
+                    h.put(key, thing);
+                }
+                return h;
             }
         };
         queue.add(req);
@@ -160,16 +169,16 @@ public class VolleyHelper {
         request(context, url, null, null, callback);
     }
 
-    public static void post(final Context context, @NonNull String url, @Nullable final HashMap<String, String> header, @Nullable HashMap<String, String> params, final Callback callback) {
-        request(context, url, header, new HashMap<String, String>(), callback);
+    public static void post(final Context context, @NonNull String url, @Nullable final HashMap<String, String> header, @Nullable HashMap<String, Object> params, final Callback callback) {
+        request(context, url, header, params, callback);
     }
 
     public static void post(final Context context, @NonNull String url, @Nullable final HashMap<String, String> header, final Callback callback) {
-        request(context, url, header, new HashMap<String, String>(), callback);
+        request(context, url, header, new HashMap<String, Object>(), callback);
     }
 
     public static void post(final Context context, @NonNull String url, final Callback callback) {
-        request(context, url, null, new HashMap<String, String>(), callback);
+        request(context, url, null, new HashMap<String, Object>(), callback);
     }
 
 
