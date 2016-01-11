@@ -18,7 +18,6 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import R.helper.Callback;
 import R.helper.CallbackResult;
@@ -51,7 +50,11 @@ public class VolleyHelper {
                             statusCode = error.networkResponse.statusCode;
                         }
                         if (callback != null) {
-                            callback.onCompleted(context, new CallbackResult(new CallbackResult.CallbackError(statusCode, error.getMessage())));
+                            String message = error.getMessage();
+                            if (message == null) {
+                                message = error.toString();
+                            }
+                            callback.onCompleted(context, new CallbackResult(new CallbackResult.CallbackError(statusCode, message)));
                         }
                     }
                 }
