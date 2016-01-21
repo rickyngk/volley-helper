@@ -16,6 +16,7 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -184,5 +185,37 @@ public class VolleyHelper {
         request(context, url, null, new HashMap<String, Object>(), callback);
     }
 
+    public static void postMultiPart(final  Context context, @NonNull String url, @Nullable final HashMap<String, String> header, String filekey, File f, final @Nullable HashMap<String, Object> params, final Callback callback) {
+        RequestQueue queue = Volley.newRequestQueue(context);
 
+        HashMap p = params;
+        if (p == null) {
+            p = new HashMap<>();
+        }
+
+        HashMap h = header;
+        if (h == null) {
+            h = new HashMap<>();
+        }
+        h.put("Content-Type", "multipart/form-data");
+
+        MultipartRequest req = new MultipartRequest(url, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                int statusCode = -1;
+                if (error.networkResponse != null) {
+                    statusCode = error.networkResponse.statusCode;
+                }
+                if (callback != null) {
+                    callback.onCompleted(context, new CallbackResult(new CallbackResult.CallbackError(statusCode, error.getMessage())));
+                }
+            }
+        } , new Response.Listener<String>() {
+            @Override
+            public void onResponse(String arg0) {
+                callback.onCompleted(context, new CallbackSuccess());
+            }
+        }, f, filekey, p , h);
+        queue.add(req);
+    }
 }
