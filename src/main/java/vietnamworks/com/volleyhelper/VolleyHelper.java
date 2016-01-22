@@ -17,6 +17,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,7 +56,7 @@ public class VolleyHelper {
                             if (message == null) {
                                 message = error.toString();
                             }
-                            callback.onCompleted(context, new CallbackResult(new CallbackResult.CallbackError(statusCode, message)));
+                            callback.onCompleted(context, new CallbackResult(new CallbackResult.CallbackErrorInfo(statusCode, message)));
                         }
                     }
                 }
@@ -103,7 +104,7 @@ public class VolleyHelper {
                             statusCode = error.networkResponse.statusCode;
                         }
                         if (callback != null) {
-                            callback.onCompleted(context, new CallbackResult(new CallbackResult.CallbackError(statusCode, error.getMessage())));
+                            callback.onCompleted(context, new CallbackResult(new CallbackResult.CallbackErrorInfo(statusCode, error.getMessage())));
                         }
                     }
                 }
@@ -140,7 +141,7 @@ public class VolleyHelper {
                             statusCode = error.networkResponse.statusCode;
                         }
                         if (callback != null) {
-                            callback.onCompleted(context, new CallbackResult(new CallbackResult.CallbackError(statusCode, error.getMessage())));
+                            callback.onCompleted(context, new CallbackResult(new CallbackResult.CallbackErrorInfo(statusCode, error.getMessage())));
                         }
                     }
                 }
@@ -187,35 +188,35 @@ public class VolleyHelper {
 
     public static void postMultiPart(final  Context context, @NonNull String url, @Nullable final HashMap<String, String> header, String filekey, File f, final @Nullable HashMap<String, Object> params, final Callback callback) {
         RequestQueue queue = Volley.newRequestQueue(context);
-
-        HashMap p = params;
-        if (p == null) {
-            p = new HashMap<>();
-        }
-
-        HashMap h = header;
-        if (h == null) {
-            h = new HashMap<>();
-        }
-        h.put("Content-Type", "multipart/form-data");
-
-        MultipartRequest req = new MultipartRequest(url, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                int statusCode = -1;
-                if (error.networkResponse != null) {
-                    statusCode = error.networkResponse.statusCode;
-                }
-                if (callback != null) {
-                    callback.onCompleted(context, new CallbackResult(new CallbackResult.CallbackError(statusCode, error.getMessage())));
-                }
-            }
-        } , new Response.Listener<String>() {
-            @Override
-            public void onResponse(String arg0) {
-                callback.onCompleted(context, new CallbackSuccess());
-            }
-        }, f, filekey, p , h);
+        MultipartRequest req = new MultipartRequest(url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if (callback != null) {
+                            callback.onCompleted(context, new CallbackSuccess(response));
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        int statusCode = -1;
+                        String responseMessage = error.getMessage();
+                        if (error.networkResponse != null) {
+                            if (error.networkResponse.data != null) {
+                                String data = new String(error.networkResponse.data, Charset.forName("UTF-8"));
+                                if (data != null && !data.isEmpty()) {
+                                    responseMessage = data;
+                                }
+                            }
+                            statusCode = error.networkResponse.statusCode;
+                        }
+                        if (callback != null) {
+                            callback.onCompleted(context, new CallbackResult(new CallbackResult.CallbackErrorInfo(statusCode, responseMessage)));
+                        }
+                    }
+                }, header, "file_contents", f, params
+        );
         queue.add(req);
     }
 }
