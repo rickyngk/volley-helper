@@ -40,14 +40,16 @@ public class MultipartRequest  extends StringRequest {
     public MultipartRequest(String url,
                             Response.Listener<String> rListener,
                             Response.ErrorListener eListener,
-                            @Nullable Map <String, String> head,
+                            @Nullable HashMap <String, String> head,
                             @NonNull String stringPart, @NonNull File file,
                             @Nullable Map<String, Object> param) {
         super(Method.POST, url, rListener, eListener);
 
-        header = head;
-        if (header == null) {
+        header = null;
+        if (head == null) {
             header = new HashMap<>();
+        } else {
+            header = (HashMap)head.clone();
         }
 
         String boundary = "----WebKitFormBoundary7MA4YWxkTrZu0gW";

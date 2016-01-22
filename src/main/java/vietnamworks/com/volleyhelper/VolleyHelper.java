@@ -114,7 +114,7 @@ public class VolleyHelper {
                 if (header == null) {
                     return new HashMap<>();
                 } else {
-                    return header;
+                    return (Map<String, String>)header.clone();
                 }
             }
         };
@@ -151,7 +151,7 @@ public class VolleyHelper {
                 if (header == null) {
                     return new HashMap<>();
                 } else {
-                    return header;
+                    return (Map<String, String>)header.clone();
                 }
             }
             @Override
