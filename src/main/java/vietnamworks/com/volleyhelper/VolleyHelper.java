@@ -23,7 +23,6 @@ import java.util.Map;
 
 import R.helper.Callback;
 import R.helper.CallbackResult;
-import R.helper.CallbackSuccess;
 
 /**
  * Created by duynk on 1/6/16.
@@ -40,7 +39,7 @@ public class VolleyHelper {
                     @Override
                     public void onResponse(JSONObject response) {
                         if (callback != null) {
-                            callback.onCompleted(context, new CallbackSuccess(response));
+                            callback.onCompleted(context, CallbackResult.success(response));
                         }
                     }
                 },
@@ -56,7 +55,7 @@ public class VolleyHelper {
                             if (message == null) {
                                 message = error.toString();
                             }
-                            callback.onCompleted(context, new CallbackResult(new CallbackResult.CallbackErrorInfo(statusCode, message)));
+                            callback.onCompleted(context, CallbackResult.error(statusCode, message));
                         }
                     }
                 }
@@ -92,7 +91,7 @@ public class VolleyHelper {
                     @Override
                     public void onResponse(JSONArray response) {
                         if (callback != null) {
-                            callback.onCompleted(context, new CallbackSuccess(response));
+                            callback.onCompleted(context, CallbackResult.success(response));
                         }
                     }
                 },
@@ -104,7 +103,7 @@ public class VolleyHelper {
                             statusCode = error.networkResponse.statusCode;
                         }
                         if (callback != null) {
-                            callback.onCompleted(context, new CallbackResult(new CallbackResult.CallbackErrorInfo(statusCode, error.getMessage())));
+                            callback.onCompleted(context, CallbackResult.error(statusCode, error.getMessage()));
                         }
                     }
                 }
@@ -129,7 +128,7 @@ public class VolleyHelper {
                     @Override
                     public void onResponse(String response) {
                         if (callback != null) {
-                            callback.onCompleted(context, new CallbackSuccess(response));
+                            callback.onCompleted(context, CallbackResult.success(response));
                         }
                     }
                 },
@@ -141,7 +140,7 @@ public class VolleyHelper {
                             statusCode = error.networkResponse.statusCode;
                         }
                         if (callback != null) {
-                            callback.onCompleted(context, new CallbackResult(new CallbackResult.CallbackErrorInfo(statusCode, error.getMessage())));
+                            callback.onCompleted(context, CallbackResult.error(statusCode, error.getMessage()));
                         }
                     }
                 }
@@ -193,7 +192,7 @@ public class VolleyHelper {
                     @Override
                     public void onResponse(String response) {
                         if (callback != null) {
-                            callback.onCompleted(context, new CallbackSuccess(response));
+                            callback.onCompleted(context, CallbackResult.success(response));
                         }
                     }
                 },
@@ -212,7 +211,7 @@ public class VolleyHelper {
                             statusCode = error.networkResponse.statusCode;
                         }
                         if (callback != null) {
-                            callback.onCompleted(context, new CallbackResult(new CallbackResult.CallbackErrorInfo(statusCode, responseMessage)));
+                            callback.onCompleted(context, CallbackResult.error(statusCode, responseMessage));
                         }
                     }
                 }, header, "file_contents", f, params
