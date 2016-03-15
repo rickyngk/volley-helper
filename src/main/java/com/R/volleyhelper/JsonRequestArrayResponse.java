@@ -1,4 +1,4 @@
-package vietnamworks.com.volleyhelper;
+package com.R.volleyhelper;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;

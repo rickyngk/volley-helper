@@ -1,4 +1,4 @@
-package vietnamworks.com.volleyhelper;
+package com.R.volleyhelper;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
